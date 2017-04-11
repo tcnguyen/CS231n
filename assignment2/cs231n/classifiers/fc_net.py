@@ -280,20 +280,19 @@ class FullyConnectedNet(object):
 
     loss, dscores = softmax_loss(scores, y)
     for i in range(1, self.num_layers + 1):
-      loss += 0.5 * self.reg * np.sum(self.params["W"+str(i)] * self.params["W"+str(i)])
+      loss += 0.5 * self.reg * np.sum(self.params["W%d" % i] * self.params["W%d" % i])
 
     d = {}
 
-    d["out" + str(self.num_layers - 1)], d["W" + str(self.num_layers)], d["b" + str(self.num_layers)] \
+    d["out%d" % (self.num_layers - 1)], grads["W%d" % self.num_layers], grads["b%d" % self.num_layers] \
       = affine_backward(dscores, ouput_cache)
 
     for i in range(self.num_layers - 1, 0,-1):
-      d["out" + str(i-1)], d["W" + str(i)], d["b" + str(i)] \
-        = affine_relu_backward(d["out" + str(i)], forward_pass["cache"+str(i)])
+      d["out%d" % (i-1)], grads["W%d" % i], grads["b%d" % i] \
+        = affine_relu_backward(d["out%d" % i], forward_pass["cache%d" % i])
 
     for i in range(1, self.num_layers + 1):
-      grads["W"+str(i)] =  d["W" + str(i)] + self.reg * self.params["W" + str(i)]
-      grads["b"+str(i)] = d["b" + str(i)]
+      grads["W%d" % i] += self.reg * self.params["W%d" % i]
 
     ############################################################################
     #                             END OF YOUR CODE                             #
